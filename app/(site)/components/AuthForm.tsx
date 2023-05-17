@@ -4,6 +4,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 import Input from '@/app/components/inputs/Input';
 import Button from "@/app/components/inputs/Button";
 import AuthSocialButton from "./AuthSocialButton";
+import { BsGithub, BsGoogle } from 'react-icons/bs'
 
 
 type Props = {}
@@ -46,16 +47,21 @@ const AuthForm = (props: Props) => {
         //NextAuto  Social Sign In
     }
 
+    const toogleVariant = () => {
+        if (variant === 'LOGIN') setVariant('REGISTER')
+        else if (variant === 'REGISTER') setVariant('LOGIN')
+    }
+
 
     return (
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
                 <form action="" className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     {variant === 'REGISTER' && (
-                        <Input id="name" label="Name" register={register} errors={errors} />
+                        <Input id="name" label="Name" register={register} errors={errors} disabled={isLoading} />
                     )}
-                    <Input id="email" label="Email" register={register} errors={errors} />
-                    <Input id="password" label="Password" type="password" register={register} errors={errors} />
+                    <Input id="email" label="Email" register={register} errors={errors} disabled={isLoading} />
+                    <Input id="password" label="Password" type="password" register={register} errors={errors} disabled={isLoading} />
                     <Button disabled={isLoading} fullWidth type="submit">Test</Button>
                 </form>
 
@@ -72,7 +78,16 @@ const AuthForm = (props: Props) => {
                     </div>
 
                     <div className="mt-6 flex gap-2">
-                        <AuthSocialButton />
+                        <AuthSocialButton icon={BsGithub} onClick={() => socialAction('github')} />
+                        <AuthSocialButton icon={BsGoogle} onClick={() => socialAction('google')} />
+                    </div>
+                </div>
+                <div className="mt-6 flex justify-center gap-2 px-2 text-sm text-gray-500">
+                    <div>
+                        {variant === 'LOGIN' ? "New to Messener?" : "Already have an account?"}
+                    </div>
+                    <div onClick={toogleVariant} className="cursor-pointer underline">
+                        {variant === 'LOGIN' ? "Create an account" : "Login"}
                     </div>
                 </div>
             </div>
