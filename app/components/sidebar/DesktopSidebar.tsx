@@ -4,6 +4,7 @@ import useRoutes from "@/app/hooks/useRoutes";
 import { useState } from "react";
 import DesktopItem from "./DesktopItem";
 import { User } from "@prisma/client";
+import Avator from "../Avatar";
 
 interface DesktopSidebarProps {
     currentUser: User;
@@ -12,7 +13,7 @@ interface DesktopSidebarProps {
 
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentUser }) => {
     const routes = useRoutes();
-    const [isOpened, setIsOpened] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <div className="hidden justify-between lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-20 lg:flex-col lg:overflow-y-auto lg:border-r-[1px] lg:bg-white lg:pb-4 xl:px-6">
@@ -30,6 +31,11 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentUser }) => {
                     ))}
 
                 </ul>
+            </nav>
+            <nav className="mt-4 flex flex-col items-center justify-between">
+                <div onClick={() => setIsOpen(true)}>
+                    <Avator user={currentUser} />
+                </div>
             </nav>
         </div>
     );
