@@ -9,6 +9,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
         <Sidebar>
             <div className="h-full">
                 <UserList users={users} />
+                {children}
             </div>
         </Sidebar>
     );
