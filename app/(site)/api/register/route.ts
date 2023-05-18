@@ -11,14 +11,14 @@ export async function POST(
         const {
             email,
             name,
-            pasword,
+            password,
         } = body;
 
-        if (!email || !name || !pasword) {
+        if (!email || !name || !password) {
             return new NextResponse('Missing information', { status: 400 });
         }
 
-        const hashedPassword = await bcrypt.hash(pasword, 12);
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = await prisma.user.create({
             data: {
