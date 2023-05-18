@@ -72,9 +72,19 @@ const AuthForm = (props: Props) => {
     const socialAction = (action: string) => {
         setIsLoading(true)
 
-        //NextAuto  Social Sign In
-    }
+        signIn(action, { redirect: false })
+            .then((callback) => {
+                if (callback?.error) {
+                    toast.error('Invalid Credentials!')
+                }
 
+                if (callback?.ok && !callback?.error) {
+                    toast.success('Logged in!');
+                    //router.push('/users')
+                }
+            })
+            .finally(() => setIsLoading(false));
+    }
     const toogleVariant = () => {
         if (variant === 'LOGIN') setVariant('REGISTER')
         else if (variant === 'REGISTER') setVariant('LOGIN')
