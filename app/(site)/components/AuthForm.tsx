@@ -5,7 +5,9 @@ import Input from '@/app/components/inputs/Input';
 import Button from "@/app/components/inputs/Button";
 import AuthSocialButton from "./AuthSocialButton";
 import { BsGithub, BsGoogle } from 'react-icons/bs'
-
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 type Props = {}
 type Varient = 'LOGIN' | 'REGISTER'
@@ -19,7 +21,8 @@ const AuthForm = (props: Props) => {
         else setVariant('LOGIN')
     }, [variant])
 
-    const { register,
+    const {
+        register,
         handleSubmit,
         formState: {
             errors
@@ -34,10 +37,24 @@ const AuthForm = (props: Props) => {
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true)
+        console.log(data)
         if (variant === 'REGISTER') {
-            //Axios Register
-        } else if (variant === 'LOGIN') {
-            //NextAuth SignIn
+            axios.post('/api/register', data)
+                .catch((err) => toast.error('Something went wrong!'))
+                .finally(() => setIsLoading(false))
+        }
+        if (variant === 'LOGIN') {
+            signIn('credentials', { ...data, redirect: false })
+                .then((callback) => {
+                    console.log(callback)
+                    if (callback?.error) {
+                        toast.error('Invalid Credentials!')
+                    }
+                    if (callback?.ok && !callback?.error) {
+                        toast.success('Logged in!')
+                    }
+                })
+                .finally(() => setIsLoading(false))
         }
     }
 
@@ -62,7 +79,7 @@ const AuthForm = (props: Props) => {
                     )}
                     <Input id="email" label="Email" register={register} errors={errors} disabled={isLoading} />
                     <Input id="password" label="Password" type="password" register={register} errors={errors} disabled={isLoading} />
-                    <Button disabled={isLoading} fullWidth type="submit">Test</Button>
+                    <Button disabled={isLoading} fullWidth type="submit">{variant === 'LOGIN' ? 'Sign In' : 'Register'}</Button>
                 </form>
 
                 <div className="mt-6">

@@ -22,11 +22,11 @@ export const authOptions: AuthOptions = {
             name: 'Credentials',
             credentials: {
                 email: { label: 'email', type: 'text' },
-                password: { label: 'Password', type: 'password' },
+                password: { label: 'password', type: 'password' },
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    throw new Error('Invalid credentials');
+                    throw new Error('Missing input fields');
                 };
 
                 const user = await prisma.user.findUnique({
@@ -40,6 +40,8 @@ export const authOptions: AuthOptions = {
                 const isCorrectPassword = await bcrypt.compare(credentials.password, user.hashedPassword);
 
                 if (!isCorrectPassword) throw new Error('Invalid credentials');
+
+                return user;
             },
 
         }),
@@ -49,7 +51,7 @@ export const authOptions: AuthOptions = {
     session: {
         strategy: 'jwt',
     },
-    secret: process.env.NEXT_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
