@@ -13,7 +13,7 @@ interface IParmas {
 
 const ConversationId = async ({ params }: { params: IParmas }) => {
     const conversation = await getConversationById(params.conversationId);
-    const message = await getMessages(params.conversationId);
+    const messages = await getMessages(params.conversationId);
 
     if (!conversation) {
         return (
@@ -29,7 +29,7 @@ const ConversationId = async ({ params }: { params: IParmas }) => {
         <div className="h-full lg:pl-80">
             <div className="flex h-full flex-col">
                 <Header conversation={conversation} />
-                <Body />
+                <Body initialMessages={messages} />
                 <Form />
             </div>
         </div>
