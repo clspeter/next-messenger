@@ -60,7 +60,7 @@ export async function POST(
             }
         });
 
-        await pusherServer.trigger(currentUser.email, 'converstaion:update', {
+        await pusherServer.trigger(currentUser.email, 'conversation:update', {
             id: conversationId,
             messages: [updatedMessage]
         })
