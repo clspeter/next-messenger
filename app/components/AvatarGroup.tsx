@@ -10,7 +10,6 @@ interface AvatarGroupProps {
 
 const AvatarGroup: React.FC<AvatarGroupProps> = ({ users }) => {
     const slicedUsers = users?.slice(0, 3)
-    console.log(slicedUsers)
 
     const positionMap = {
         0: 'top-0 left-[12px]',
