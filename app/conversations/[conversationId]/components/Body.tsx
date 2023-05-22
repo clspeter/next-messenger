@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 import useConversation from '@/app/hooks/useConversation';
-import { puhserClient } from '@/app/libs/puhser';
+import { pusherClient } from '@/app/libs/pusher';
 import { FullMessageType } from '@/app/types';
 
 import MessageBox from './MessageBox';
@@ -48,15 +48,15 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
     }, [conversationId]);
 
     useEffect(() => {
-        puhserClient.subscribe(conversationId)
+        pusherClient.subscribe(conversationId)
         bottomRef?.current?.scrollIntoView();
 
-        puhserClient.bind('messages:new', messageHandler)
-        puhserClient.bind('message:update', updateMessageHandler)
+        pusherClient.bind('messages:new', messageHandler)
+        pusherClient.bind('message:update', updateMessageHandler)
         return () => {
-            puhserClient.unsubscribe(conversationId)
-            puhserClient.unbind('messages:new', messageHandler)
-            puhserClient.unbind('message:update', updateMessageHandler)
+            pusherClient.unsubscribe(conversationId)
+            pusherClient.unbind('messages:new', messageHandler)
+            pusherClient.unbind('message:update', updateMessageHandler)
         }
 
     }, [conversationId])
