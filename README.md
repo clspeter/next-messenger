@@ -1,34 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next-Messenger
 
-## Getting Started
+### Real-Time Messenger Clone: Next.js 13, React, Tailwind, Prisma, MongoDB, NextAuth, Pusher
+使用上述技術製作的Messenger Clone
 
-First, run the development server:
+### [Host on Vercel](https://next-messenger-six.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+主要功能：
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 使用Pusher進行即時訊息傳遞
+- 使用Tailwind做RWD切版和動畫過渡效果
+- 使用NextAuth進行憑證驗證
+- 整合Google,Github身份驗證
+- 使用Cloudinary CDN進行檔案和圖片上傳
+- 使用react-hook-form進行客戶端表單驗證和處理
+- 使用react-toast處理服務器錯誤
+- 已讀回傳
+- 在線/離線用戶狀態
+- 群聊和一對一消息
+- 傳圖片功能
+- 可設定個人名稱和頭像
+- 新增和管理聊天室和頻道
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 心得
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+做過最大型的clone project，react-hook-form和react-toast算是簡單上手易用，可以替代手寫達到更高效開發。用了大量組件，學習到組件資料夾結構和參數傳遞。較困難的是用到比較多後端技術，api邏輯還算有弄清楚，其中資料庫結構的部分還沒有摸的很懂，可能要一開始規畫專案的時候就要先設計好格式。
 
-## Learn More
+## Credit
 
-To learn more about Next.js, take a look at the following resources:
+Thanks to [Antonio Erdeljac](https://www.linkedin.com/in/antonio-erdeljac/) who made a great great [video](https://www.youtube.com/watch?v=PGPGcKBpAk8) guide for Messanger Clone.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
