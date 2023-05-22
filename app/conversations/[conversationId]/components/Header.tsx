@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { HiChevronLeft, HiEllipsisHorizontal } from 'react-icons/hi2';
 
 import Avatar from '@/app/components/Avatar';
+import AvatarGroup from '@/app/components/AvatarGroup';
 import useOtherUser from '@/app/hooks/useOtherUser';
 import { Conversation, User } from '@prisma/client';
 
@@ -37,7 +38,8 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
                     <Link className="block cursor-pointer text-sky-500 hover:text-sky-600  lg:hidden" href="/conversations">
                         <HiChevronLeft />
                     </Link>
-                    <Avatar user={otherUser} />
+                    {conversation.isGroup ? (<AvatarGroup users={conversation.users} />) : (<Avatar user={otherUser} />)}
+
                     <div className="flex flex-col">
                         <div>
                             {conversation.name || otherUser.name}
