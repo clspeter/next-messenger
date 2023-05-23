@@ -1,14 +1,16 @@
 'use client'
-import React, { useCallback, useEffect } from 'react'
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
+import axios from 'axios';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect } from 'react';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { BsGithub, BsGoogle } from 'react-icons/bs';
+
+import Button from '@/app/components/inputs/Button';
 import Input from '@/app/components/inputs/Input';
-import Button from "@/app/components/inputs/Button";
-import AuthSocialButton from "./AuthSocialButton";
-import { BsGithub, BsGoogle } from 'react-icons/bs'
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
+import AuthSocialButton from './AuthSocialButton';
 
 type Props = {}
 type Varient = 'LOGIN' | 'REGISTER'
@@ -46,7 +48,6 @@ const AuthForm = (props: Props) => {
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true)
-        console.log(data)
         if (variant === 'REGISTER') {
             axios.post('/api/register', data)
                 .then(() => signIn('credentials', data))
@@ -56,7 +57,6 @@ const AuthForm = (props: Props) => {
         if (variant === 'LOGIN') {
             signIn('credentials', { ...data, redirect: false })
                 .then((callback) => {
-                    console.log(callback)
                     if (callback?.error) {
                         toast.error('Invalid Credentials!')
                     }
