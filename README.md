@@ -1,6 +1,7 @@
 # Next-Messenger
 
-### Real-Time Messenger Clone: Next.js 13, React, Tailwind, Prisma, MongoDB, NextAuth, Pusher
+## Real-Time Messenger Clone: Next.js 13, React, Tailwind, Prisma, MongoDB, NextAuth, Pusher
+
 使用上述技術製作的Messenger Clone
 
 ### [Host on Vercel](https://next-messenger-six.vercel.app/)
@@ -23,7 +24,13 @@
 
 ### 心得
 
-做過最大型的clone project，react-hook-form和react-toast算是簡單上手易用，可以替代手寫達到更高效開發。用了大量組件，學習到組件資料夾結構和參數傳遞。較困難的是用到比較多後端技術，api邏輯還算有弄清楚，其中資料庫結構的部分還沒有摸的很懂，可能要一開始規畫專案的時候就要先設計好格式。
+做過最大型的clone project，react-hook-form和react-toast算是簡單上手易用，可以替代手寫達到更高效開發。
+
+clsx可以很好的依據state切換className
+
+用了大量組件，學習到組件資料夾結構和特殊函式的參數傳遞。
+
+較困難的是用到比較多後端技術，api邏輯還算有弄清楚，其中資料庫結構的部分還沒有摸的很懂，可能要一開始規畫專案的時候就要先設計好格式。
 
 ## Credit
 
