@@ -93,6 +93,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ initialItems, users
                             <MdOutlineGroupAdd size={20} />
                         </div>
                     </div>
+                    <hr />
                     {items.map((item) => (
                         <ConversationBox key={item.id} data={item} selected={
                             conversationId === item.id
