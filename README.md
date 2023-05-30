@@ -4,6 +4,10 @@
 
 使用上述技術製作的Messenger Clone
 
+[PC](https://github.com/clspeter/next-messenger/assets/16301430/c8a407b8-89f3-492b-a299-37826b223710)
+
+[Mobile](https://github.com/clspeter/next-messenger/assets/16301430/37fa1114-8a7d-4128-a949-ab8a25c6daf0)
+
 ### [Host on Vercel](https://next-messenger-six.vercel.app/)
 
 主要功能：
