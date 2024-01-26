@@ -28,7 +28,7 @@
 
 ### 心得
 
-做過最大型的clone project，react-hook-form和react-toast算是簡單上手易用，可以替代手寫達到更高效開發。
+messenger的 clone project，react-hook-form和react-toast算是簡單上手易用，可以替代手寫達到更高效開發。
 
 clsx可以很好的依據state切換className
 
