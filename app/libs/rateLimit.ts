@@ -43,7 +43,14 @@ export function rateLimit(key: string, limit: number, windowMs: number): RateLim
 
 type HeaderBag = Headers | Record<string, string | string[] | undefined> | undefined;
 
-/** Best-effort client IP from proxy headers. Falls back to 'unknown'. */
+/**
+ * Best-effort client IP from proxy headers. Falls back to 'unknown'.
+ *
+ * Prefers `x-real-ip`: on Vercel (and most reverse proxies) this is set by the
+ * platform and cannot be spoofed by the client. `x-forwarded-for` is fully
+ * client-controllable, so trusting its first value would let an attacker rotate
+ * the value per request and bypass the rate limit entirely.
+ */
 export function getClientIp(headers: HeaderBag): string {
     if (!headers) return 'unknown';
 
@@ -53,8 +60,11 @@ export function getClientIp(headers: HeaderBag): string {
         return Array.isArray(value) ? value[0] : value;
     };
 
+    const realIp = read('x-real-ip');
+    if (realIp) return realIp.trim();
+
     const forwarded = read('x-forwarded-for');
     if (forwarded) return forwarded.split(',')[0].trim();
 
-    return read('x-real-ip') ?? 'unknown';
+    return 'unknown';
 }

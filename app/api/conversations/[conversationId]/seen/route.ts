@@ -22,6 +22,12 @@ export async function POST(
 
         if (!currentUser?.id || !currentUser?.email) return new NextResponse('Unauthorized', { status: 401 });
 
+        // Guard before any DB op: a missing id would make findUnique throw, and the
+        // conversationChannel() broadcast below relies on a real string.
+        if (!conversationId || typeof conversationId !== 'string') {
+            return new NextResponse('Invalid ID', { status: 400 });
+        }
+
         //Find the exisiting conversation
         const conversation = await prisma.conversation.findUnique({
             where: {
@@ -76,7 +82,7 @@ export async function POST(
             return NextResponse.json(conversation);
         }
 
-        await pusherServer.trigger(conversationChannel(conversationId!), 'message:update', updatedMessage)
+        await pusherServer.trigger(conversationChannel(conversationId), 'message:update', updatedMessage)
 
         return NextResponse.json(updatedMessage);
     } catch (error: any) {

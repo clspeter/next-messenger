@@ -9,6 +9,10 @@ const getConversationsById = async (conversationId: string) => {
 
         if (!currentUser?.id) return null;
 
+        // Prisma ignores `undefined` in `where`; without this, a missing id would
+        // drop the `id` filter and return the user's first conversation instead.
+        if (!conversationId) return null;
+
         // Scope by membership: a user may only load a conversation they belong to.
         const conversation = await prisma.conversation.findFirst({
             where: {

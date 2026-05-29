@@ -22,6 +22,14 @@ export async function DELETE(
             return new NextResponse('Unauthorized', { status: 401 })
         }
 
+        // CRITICAL: Prisma silently drops `undefined` fields from a `where`. Without
+        // this guard, a missing conversationId would make both findFirst and the
+        // deleteMany below match purely on userIds — deleting ALL of the user's
+        // conversations. Validate before any DB op.
+        if (!conversationId || typeof conversationId !== 'string') {
+            return new NextResponse('Invalid ID', { status: 400 });
+        }
+
         // Only members may see/act on the conversation. 404 (not 400) avoids an
         // existence oracle for conversation IDs the caller does not belong to.
         const existingConversation = await prisma.conversation.findFirst({
