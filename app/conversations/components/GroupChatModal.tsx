@@ -10,12 +10,12 @@ import Button from '@/app/components/inputs/Button';
 import Input from '@/app/components/inputs/Input';
 import Select from '@/app/components/inputs/Select';
 import Modal from '@/app/components/Model';
-import { User } from '@prisma/client';
+import { SafeUser } from '@/app/types';
 
 interface GroupChatModalProps {
     isOpen: boolean;
     onClose: () => void;
-    users: User[];
+    users: SafeUser[];
 }
 
 const GroupChatModal: React.FC<GroupChatModalProps> = ({ isOpen, onClose, users }) => {

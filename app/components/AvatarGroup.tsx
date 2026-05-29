@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 
-import { User } from '@prisma/client';
+import { SafeUser } from '@/app/types';
 
 interface AvatarGroupProps {
-    users?: User[]
+    users?: SafeUser[]
 }
 
 const AvatarGroup: React.FC<AvatarGroupProps> = ({ users }) => {

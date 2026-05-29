@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import prisma from '@/app/libs/prismadb';
 import { pusherServer } from '@/app/libs/pusher';
+import { userChannel } from '@/app/libs/pusherChannels';
+import { safeUserSelect } from '@/app/libs/safeUser';
 
 interface IParams {
     conversationId?: string;
@@ -20,20 +22,33 @@ export async function DELETE(
             return new NextResponse('Unauthorized', { status: 401 })
         }
 
-        const existingConversation = await prisma?.conversation.findUnique({
+        // CRITICAL: Prisma silently drops `undefined` fields from a `where`. Without
+        // this guard, a missing conversationId would make both findFirst and the
+        // deleteMany below match purely on userIds — deleting ALL of the user's
+        // conversations. Validate before any DB op.
+        if (!conversationId || typeof conversationId !== 'string') {
+            return new NextResponse('Invalid ID', { status: 400 });
+        }
+
+        // Only members may see/act on the conversation. 404 (not 400) avoids an
+        // existence oracle for conversation IDs the caller does not belong to.
+        const existingConversation = await prisma.conversation.findFirst({
             where: {
-                id: conversationId
+                id: conversationId,
+                userIds: {
+                    hasSome: [currentUser.id]
+                }
             },
             include: {
-                users: true
+                users: { select: safeUserSelect }
             }
         })
 
         if (!existingConversation) {
-            return new NextResponse('Invlid ID', { status: 400 })
+            return new NextResponse('Not Found', { status: 404 })
         }
 
-        const deletedConversation = await prisma?.conversation.deleteMany({
+        const deletedConversation = await prisma.conversation.deleteMany({
             where: {
                 id: conversationId,
                 userIds: {
@@ -44,7 +59,7 @@ export async function DELETE(
 
         existingConversation.users.forEach((user) => {
             if (user.email) {
-                pusherServer.trigger(user.email, 'conversation:remove', existingConversation)
+                pusherServer.trigger(userChannel(user.email), 'conversation:remove', existingConversation)
             }
         })
 

@@ -6,6 +6,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 import prisma from '@/app/libs/prismadb';
+import { rateLimit, getClientIp } from '@/app/libs/rateLimit';
 
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
@@ -24,24 +25,33 @@ export const authOptions: AuthOptions = {
                 email: { label: 'email', type: 'text' },
                 password: { label: 'password', type: 'password' },
             },
-            async authorize(credentials) {
+            async authorize(credentials, req) {
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error('Missing input fields');
                 };
+
+                // Throttle credential attempts per (email, IP) to slow brute force.
+                const ip = getClientIp(req?.headers);
+                const limit = rateLimit(`login:${credentials.email}:${ip}`, 10, 15 * 60 * 1000);
+                if (!limit.success) {
+                    throw new Error('Too many attempts. Please try again later.');
+                }
 
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
                 });
 
-                if (!user) throw new Error('Invalid credentials');
-
-                if (!user?.hashedPassword) throw new Error('No password set, Plase login with Github or Google');
+                // Use one generic message so password vs. OAuth-only accounts are
+                // indistinguishable to the caller.
+                if (!user || !user.hashedPassword) throw new Error('Invalid credentials');
 
                 const isCorrectPassword = await bcrypt.compare(credentials.password, user.hashedPassword);
 
                 if (!isCorrectPassword) throw new Error('Invalid credentials');
 
-                return user;
+                // Never let the password hash flow into the NextAuth token/session.
+                const { hashedPassword, ...safeUser } = user;
+                return safeUser;
             },
 
         }),

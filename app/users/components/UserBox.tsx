@@ -6,10 +6,10 @@ import { useCallback, useState } from 'react';
 
 import Avatar from '@/app/components/Avatar';
 import LoadingModal from '@/app/components/LoadingModal';
-import { User } from '@prisma/client';
+import { SafeUser } from '@/app/types';
 
 interface UserBoxProps {
-    data: User;
+    data: SafeUser;
 }
 
 

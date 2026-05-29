@@ -2,7 +2,9 @@ import PusherServer from 'pusher';
 import PusherClient from 'pusher-js';
 
 export const pusherServer = new PusherServer({
-    appId: process.env.PUHSER_APP_ID!,
+    // Prefer the correctly-spelled var; fall back to the legacy misspelled
+    // `PUHSER_APP_ID` so existing deployments keep working until renamed.
+    appId: (process.env.PUSHER_APP_ID ?? process.env.PUHSER_APP_ID)!,
     key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
     secret: process.env.PUSHER_SECRET!,
     cluster: 'ap3',

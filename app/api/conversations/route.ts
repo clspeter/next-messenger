@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import prisma from '@/app/libs/prismadb';
 import { pusherServer } from '@/app/libs/pusher';
+import { userChannel } from '@/app/libs/pusherChannels';
+import { safeUserSelect } from '@/app/libs/safeUser';
 
 export async function POST(
     request: Request
@@ -14,16 +16,23 @@ export async function POST(
 
         if (!currentUser?.id || !currentUser?.email) return new NextResponse('Unauthorized', { status: 401 });
 
-        if (isGroup && (!members || members.length < 2 || !name)) return new NextResponse('Invalid Data', { status: 400 });
-
         if (isGroup) {
+            if (!Array.isArray(members) || members.length < 2 || typeof name !== 'string' || !name.trim()) {
+                return new NextResponse('Invalid Data', { status: 400 });
+            }
+
+            const memberIds = members.map((member: { value?: unknown }) => member?.value);
+            if (memberIds.some((id) => typeof id !== 'string' || !id)) {
+                return new NextResponse('Invalid Data', { status: 400 });
+            }
+
             const newConversation = await prisma.conversation.create({
                 data: {
                     name,
                     isGroup,
                     users: {
                         connect: [
-                            ...members.map((member: { value: string }) => ({ id: member.value })),
+                            ...(memberIds as string[]).map((id) => ({ id })),
                             {
                                 id: currentUser.id
                             }
@@ -31,17 +40,21 @@ export async function POST(
                     }
                 },
                 include: {
-                    users: true
+                    users: { select: safeUserSelect }
                 }
             });
 
             newConversation.users.forEach((user) => {
                 if (user.email) {
-                    pusherServer.trigger(user.email, 'conversation:new', newConversation)
+                    pusherServer.trigger(userChannel(user.email), 'conversation:new', newConversation)
                 }
             })
 
             return NextResponse.json(newConversation)
+        }
+
+        if (typeof userId !== 'string' || !userId) {
+            return new NextResponse('Invalid Data', { status: 400 });
         }
 
         const exisitiongConversations = await prisma.conversation.findMany({
@@ -79,13 +92,13 @@ export async function POST(
                 }
             },
             include: {
-                users: true
+                users: { select: safeUserSelect }
             }
         });
 
-        newConversation.users.map((user) => {
+        newConversation.users.forEach((user) => {
             if (user.email) {
-                pusherServer.trigger(user.email, 'conversation:new', newConversation);
+                pusherServer.trigger(userChannel(user.email), 'conversation:new', newConversation);
             }
         })
 
