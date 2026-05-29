@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import useConversation from '@/app/hooks/useConversation';
 import { pusherClient } from '@/app/libs/pusher';
+import { conversationChannel } from '@/app/libs/pusherChannels';
 import { FullMessageType } from '@/app/types';
 
 import MessageBox from './MessageBox';
@@ -48,13 +49,13 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
     }, [conversationId]);
 
     useEffect(() => {
-        pusherClient.subscribe(conversationId)
+        pusherClient.subscribe(conversationChannel(conversationId))
         bottomRef?.current?.scrollIntoView();
 
         pusherClient.bind('messages:new', messageHandler)
         pusherClient.bind('message:update', updateMessageHandler)
         return () => {
-            pusherClient.unsubscribe(conversationId)
+            pusherClient.unsubscribe(conversationChannel(conversationId))
             pusherClient.unbind('messages:new', messageHandler)
             pusherClient.unbind('message:update', updateMessageHandler)
         }

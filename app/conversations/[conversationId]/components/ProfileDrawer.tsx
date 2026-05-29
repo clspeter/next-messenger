@@ -9,7 +9,9 @@ import AvatarGroup from '@/app/components/AvatarGroup';
 import useActiveList from '@/app/hooks/useActiveList';
 import useOtherUser from '@/app/hooks/useOtherUser';
 import { Dialog, Transition } from '@headlessui/react';
-import { Conversation, User } from '@prisma/client';
+import { Conversation } from '@prisma/client';
+
+import { SafeUser } from '@/app/types';
 
 import ConfirmModal from './ConfirmModal';
 
@@ -17,7 +19,7 @@ interface ProfileDrawerProps {
     isOpen: boolean;
     onClose: () => void;
     data: Conversation & {
-        users: User[];
+        users: SafeUser[];
     };
 }
 

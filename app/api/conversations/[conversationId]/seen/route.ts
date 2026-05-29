@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import prisma from '@/app/libs/prismadb';
 import { pusherServer } from '@/app/libs/pusher';
+import { conversationChannel, userChannel } from '@/app/libs/pusherChannels';
+import { safeUserSelect } from '@/app/libs/safeUser';
 
 interface IParams {
     conversationId?: string;
@@ -16,7 +18,7 @@ export async function POST(
         const currentUser = await getCurrentUser();
         const {
             conversationId
-        } = params;;
+        } = params;
 
         if (!currentUser?.id || !currentUser?.email) return new NextResponse('Unauthorized', { status: 401 });
 
@@ -28,14 +30,19 @@ export async function POST(
             include: {
                 messages: {
                     include: {
-                        seen: true,
+                        seen: { select: safeUserSelect },
                     }
                 },
-                users: true,
+                users: { select: safeUserSelect },
             }
         });
 
         if (!conversation) return new NextResponse('Invaild ID', { status: 400 });
+
+        // Authorize: only members may mark messages seen or trigger broadcasts.
+        if (!conversation.userIds.includes(currentUser.id)) {
+            return new NextResponse('Forbidden', { status: 403 });
+        }
 
         //Find the last message
         const lastMessage = conversation.messages[conversation.messages.length - 1];
@@ -48,8 +55,8 @@ export async function POST(
                 id: lastMessage.id
             },
             include: {
-                sender: true,
-                seen: true,
+                sender: { select: safeUserSelect },
+                seen: { select: safeUserSelect },
             },
             data: {
                 seen: {
@@ -60,7 +67,7 @@ export async function POST(
             }
         });
 
-        await pusherServer.trigger(currentUser.email, 'conversation:update', {
+        await pusherServer.trigger(userChannel(currentUser.email), 'conversation:update', {
             id: conversationId,
             messages: [updatedMessage]
         })
@@ -69,7 +76,7 @@ export async function POST(
             return NextResponse.json(conversation);
         }
 
-        await pusherServer.trigger(conversationId!, 'message:update', updatedMessage)
+        await pusherServer.trigger(conversationChannel(conversationId!), 'message:update', updatedMessage)
 
         return NextResponse.json(updatedMessage);
     } catch (error: any) {

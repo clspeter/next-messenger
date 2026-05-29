@@ -1,5 +1,6 @@
 import getSession from '@/app/actions/getSession';
 import prisma from '@/app/libs/prismadb';
+import { safeUserSelect } from '@/app/libs/safeUser';
 
 const getCurrentUser = async () => {
     try {
@@ -9,6 +10,7 @@ const getCurrentUser = async () => {
 
         const currentUser = await prisma.user.findUnique({
             where: { email: session.user.email as string },
+            select: safeUserSelect,
         });
 
         if (!currentUser) return null;

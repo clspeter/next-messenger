@@ -5,14 +5,14 @@ import { useState } from 'react';
 
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import useRoutes from '@/app/hooks/useRoutes';
-import { User } from '@prisma/client';
+import { SafeUser } from '@/app/types';
 
 import Avator from '../Avatar';
 import DesktopItem from './DesktopItem';
 import SettingModal from './SettingModal';
 
 interface DesktopSidebarProps {
-    currentUser: User;
+    currentUser: SafeUser;
 }
 
 

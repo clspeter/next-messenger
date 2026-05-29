@@ -8,13 +8,15 @@ import Avatar from '@/app/components/Avatar';
 import AvatarGroup from '@/app/components/AvatarGroup';
 import useActiveList from '@/app/hooks/useActiveList';
 import useOtherUser from '@/app/hooks/useOtherUser';
-import { Conversation, User } from '@prisma/client';
+import { Conversation } from '@prisma/client';
+
+import { SafeUser } from '@/app/types';
 
 import ProfileDrawer from './ProfileDrawer';
 
 interface HeaderProps {
     conversation: Conversation & {
-        users: User[];
+        users: SafeUser[];
     };
 }
 

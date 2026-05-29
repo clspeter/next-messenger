@@ -10,14 +10,14 @@ import { toast } from 'react-hot-toast';
 
 import Button from '@/app/components/inputs/Button';
 import Input from '@/app/components/inputs/Input';
-import { User } from '@prisma/client';
+import { SafeUser } from '@/app/types';
 
 import Modal from '../Model';
 
 interface SettingModalProps {
     isOpen?: boolean;
     onClose: () => void;
-    currentUser: User;
+    currentUser: SafeUser;
 }
 
 

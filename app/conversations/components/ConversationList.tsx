@@ -8,7 +8,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { MdOutlineGroupAdd } from 'react-icons/md';
 
 import { pusherClient } from '@/app/libs/pusher';
-import { User } from '@prisma/client';
+import { userChannel } from '@/app/libs/pusherChannels';
+import { SafeUser } from '@/app/types';
 
 import useConversation from '../../hooks/useConversation';
 import { FullConversationType } from '../../types';
@@ -17,7 +18,7 @@ import GroupChatModal from './GroupChatModal';
 
 interface ConversationListProps {
     initialItems: FullConversationType[];
-    users: User[];
+    users: SafeUser[];
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ initialItems, users }) => {
@@ -36,7 +37,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ initialItems, users
     useEffect(() => {
         if (!pusherKey) return;
 
-        pusherClient.subscribe(pusherKey);
+        pusherClient.subscribe(userChannel(pusherKey));
 
         const newHandler = (conversation: FullConversationType) => {
             setItems((current) => {
@@ -72,7 +73,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ initialItems, users
         pusherClient.bind('conversation:remove', removeHandler);
 
         return () => {
-            pusherClient.unsubscribe(pusherKey);
+            pusherClient.unsubscribe(userChannel(pusherKey));
             pusherClient.unbind('conversation:new', newHandler)
             pusherClient.unbind('conversation:update', updateHandler)
             pusherClient.unbind('conversation:remove', removeHandler)

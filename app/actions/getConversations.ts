@@ -1,4 +1,5 @@
 import prisma from '@/app/libs/prismadb'
+import { safeUserSelect } from '@/app/libs/safeUser'
 import getCurrentUser from "./getCurrentUser"
 
 const getConversations = async () => {
@@ -17,11 +18,11 @@ const getConversations = async () => {
                 }
             },
             include: {
-                users: true,
+                users: { select: safeUserSelect },
                 messages: {
                     include: {
-                        sender: true,
-                        seen: true
+                        sender: { select: safeUserSelect },
+                        seen: { select: safeUserSelect }
                     }
                 }
             }

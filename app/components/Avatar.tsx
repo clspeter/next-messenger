@@ -3,12 +3,12 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 
-import { User } from '@prisma/client';
+import { SafeUser } from '@/app/types';
 
 import useActiveList from '../hooks/useActiveList';
 
 interface AvatarProps {
-    user?: User;
+    user?: SafeUser;
 }
 
 const Avator: React.FC<AvatarProps> = ({ user }) => {
